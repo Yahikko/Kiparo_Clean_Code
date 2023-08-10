@@ -1,10 +1,11 @@
 package com.example.kiparocleancode.domain.usecase
 
 import com.example.kiparocleancode.domain.models.SaveUserNameParam
+import com.example.kiparocleancode.domain.repository.UserRepository
 
-class SaveUserNameUseCase {
+class SaveUserNameUseCase(private val userRepository: UserRepository) {
 
     fun execute(param: SaveUserNameParam): Boolean {
-        return param.name.isNotEmpty()
+        return userRepository.saveName(param)
     }
 }
