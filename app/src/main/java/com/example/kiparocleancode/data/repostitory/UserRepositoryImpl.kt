@@ -1,27 +1,29 @@
 package com.example.kiparocleancode.data.repostitory
 
-import android.content.Context
 import com.example.kiparocleancode.data.DEFAULT_LAST_NAME
-import com.example.kiparocleancode.data.KEY_FIRST_NAME
-import com.example.kiparocleancode.data.KEY_LAST_NAME
-import com.example.kiparocleancode.data.SHARED_PREFS_NAME
+import com.example.kiparocleancode.data.storage.UserStorage
+import com.example.kiparocleancode.data.storage.models.User
 import com.example.kiparocleancode.domain.models.SaveUserNameParam
 import com.example.kiparocleancode.domain.models.UserName
 import com.example.kiparocleancode.domain.repository.UserRepository
 
-class UserRepositoryImpl(context: Context) : UserRepository {
-
-    private val sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
+class UserRepositoryImpl(private val userStorage: UserStorage) : UserRepository {
 
     override fun saveName(saveParam: SaveUserNameParam): Boolean {
-        sharedPreferences.edit().putString(KEY_FIRST_NAME, saveParam.name).apply()
-        return true
+        val user = mapToStorage(saveParam)
+        return userStorage.save(user)
     }
 
     override fun getName(): UserName {
+        val user = userStorage.get()
+        return matToDomain(user)
+    }
 
-        val firstName = sharedPreferences.getString(KEY_FIRST_NAME, "") ?: ""
-        val lastName = sharedPreferences.getString(KEY_LAST_NAME, DEFAULT_LAST_NAME) ?: DEFAULT_LAST_NAME
-        return UserName(firstName = firstName, lastName = lastName)
+    private fun mapToStorage(saveParam: SaveUserNameParam): User {
+        return User(firstName = saveParam.name, lastName = DEFAULT_LAST_NAME)
+    }
+
+    private fun matToDomain(user: User): UserName {
+        return UserName(firstName = user.firstName, lastName = user.lastName)
     }
 }

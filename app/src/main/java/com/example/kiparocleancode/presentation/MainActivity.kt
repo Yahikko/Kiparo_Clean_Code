@@ -1,12 +1,13 @@
 package com.example.kiparocleancode.presentation
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import com.example.kiparocleancode.R
 import com.example.kiparocleancode.data.repostitory.UserRepositoryImpl
+import com.example.kiparocleancode.data.storage.sharedprefs.SharedPrefUserStorage
 import com.example.kiparocleancode.domain.models.SaveUserNameParam
 import com.example.kiparocleancode.domain.models.UserName
 import com.example.kiparocleancode.domain.usecase.GetUserNameUseCase
@@ -14,8 +15,11 @@ import com.example.kiparocleancode.domain.usecase.SaveUserNameUseCase
 
 class MainActivity : AppCompatActivity() {
 
+    private val sharedPrefUserStorage by lazy(LazyThreadSafetyMode.NONE) {
+        SharedPrefUserStorage(applicationContext)
+    }
     private val userRepository by lazy(LazyThreadSafetyMode.NONE) {
-        UserRepositoryImpl(applicationContext)
+        UserRepositoryImpl(sharedPrefUserStorage)
     }
     private val getUserNameUseCase by lazy(LazyThreadSafetyMode.NONE) {
         GetUserNameUseCase(userRepository)
